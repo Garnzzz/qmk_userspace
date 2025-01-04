@@ -23,7 +23,7 @@
 
 #ifndef __arm__
 /* Disable unused features. */
-#    define NO_ACTION_ONESHOT
+//#    define NO_ACTION_ONESHOT
 #endif // __arm__
 
 /* Charybdis-specific features. */
@@ -32,5 +32,10 @@
 // Automatically enable the pointer layer when moving the trackball.  See also:
 // - `CHARYBDIS_AUTO_POINTER_LAYER_TRIGGER_TIMEOUT_MS`
 // - `CHARYBDIS_AUTO_POINTER_LAYER_TRIGGER_THRESHOLD`
-// #define CHARYBDIS_AUTO_POINTER_LAYER_TRIGGER_ENABLE
+#define CHARYBDIS_AUTO_POINTER_LAYER_TRIGGER_ENABLE
 #endif // POINTING_DEVICE_ENABLE
+
+#define TRI_LAYER_ADJUST_LAYER 3
+
+#define ONESHOT_TIMEOUT 5000 
+/* Time (in ms) befoe the one shot key is released */
