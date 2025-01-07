@@ -38,6 +38,10 @@ enum charybdis_keycode {
     POINTER
 };
 
+enum tap_dance_codes {
+    DANCE_0,
+};
+
 /** \brief Automatically enable sniping-mode on the pointer layer. */
 #define CHARYBDIS_AUTO_SNIPING_ON_LAYER LAYER_POINTER
 
