@@ -51,13 +51,6 @@ enum tap_dance_codes {
 	DANCE_3,
 };
 
-enum combos {
-    QW_LCA,
-    ALT_F4,
-    HME_LCA,
-    END_LCA,
-};
-
 /** \brief Automatically enable sniping-mode on the pointer layer. */
 #define CHARYBDIS_AUTO_SNIPING_ON_LAYER LAYER_POINTER
 
@@ -185,19 +178,6 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
   ),
 };
 // clang-format on
-
-const uint16_t PROGMEM lca_combo[] = {KC_Q, KC_W, COMBO_END};
-const uint16_t PROGMEM altf4_combo[] = {LALT_T(KC_F3), LSFT_T(KC_F4), COMBO_END};
-const uint16_t PROGMEM gthome_combo[] = {PT_H, LSFT_T(KC_J), LCTL_T(KC_QUOT), COMBO_END};
-const uint16_t PROGMEM gtend_combo[] = {PT_N, LSFT_T(KC_J), LCTL_T(KC_QUOT), COMBO_END};
-
-combo_t key_combos[]  = {
-    [QW_LCA] = COMBO(lca_combo, LCTL(KC_A)),
-    [ALT_F4] = COMBO(altf4_combo, LALT(KC_F4)),
-    [HME_LCA] = COMBO(gthome_combo, LCTL(LSFT(KC_HOME))),
-    [END_LCA] = COMBO(gtend_combo, LCTL(LSFT(KC_END))),
-
-};
 
 #ifdef POINTING_DEVICE_ENABLE
 #    ifdef CHARYBDIS_AUTO_POINTER_LAYER_TRIGGER_ENABLE
