@@ -38,9 +38,6 @@ enum charybdis_keycode {
     POINTER
 };
 
-enum tap_dance_codes {
-    DANCE_0,
-};
 
 /** \brief Automatically enable sniping-mode on the pointer layer. */
 #define CHARYBDIS_AUTO_SNIPING_ON_LAYER LAYER_POINTER
@@ -67,7 +64,7 @@ static uint16_t auto_pointer_layer_timer = 0;
 #    define DRGSCRL KC_NO
 #    define DPI_MOD KC_NO
 #    define S_D_MOD KC_NO
-#    define SNIPING KC_NO
+#    define SNIPING KC_NO.
 #endif // !POINTING_DEVICE_ENABLE
 
 // clang-format off
@@ -82,8 +79,8 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
   // ├──────────────────────────────────────────────────────┤ ├──────────────────────────────────────────────────────┤
        KC_LCTL,    LT(0, KC_Z),    LT(0, KC_X),    LT(0, KC_C),    LT(0, KC_V),    KC_B,       LT(0, KC_N),    KC_M, KC_COMM,  KC_DOT, PT_SLSH, KC_LALT,
   // ╰──────────────────────────────────────────────────────┤ ├──────────────────────────────────────────────────────╯
-                                   KC_LGUI, LOWER, TD(DANCE_0),      RAISE,  KC_ENT,
-                                           KC_LALT, KC_BSPC,     KC_DEL
+                        QK_REPEAT_KEY, LT(LOWER, KC_BSPC), KC_ESC,     KC_ENT,  LT(RAISE, KC_SPC),
+                                            KC_ESC, KC_DEL,     OSM(MOD_LSFT)
   //                            ╰───────────────────────────╯ ╰──────────────────╯
   ),
 
@@ -282,20 +279,9 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
 			return false;
 		}
 		return true;			// Return true for normal processing of tap keycode
-
-	case TD(DANCE_0):
-        action = &tap_dance_actions[TD_INDEX(keycode)];
-        if (!record->event.pressed && action->state.count && !action->state.finished) {
-            tap_dance_tap_hold_t *tap_hold = (tap_dance_tap_hold_t *)action->user_data;
-            tap_code16(tap_hold->tap);
-        }
         break;
-    
-        return false;
   }
-  return true;
 }
+    
 
-tap_dance_action_t tap_dance_actions[] = {
-		[DANCE_0] = ACTION_TAP_DANCE_TAP_HOLD(KC_TAB, KC_ENT),
-};
+
