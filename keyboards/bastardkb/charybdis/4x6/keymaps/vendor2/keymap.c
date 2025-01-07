@@ -66,7 +66,7 @@ static uint16_t auto_pointer_layer_timer = 0;
 #define PT_H (KC_HOME, KC_H)
 #define PT_N (KC_END, KC_N)
 #define PT_MINS (KC_PAUS, KC_MINS)
-#define PT_QUES (KC_PAUS, KC_QUES
+#define PT_QUES (KC_PAUS, KC_QUES)
 
 #ifndef POINTING_DEVICE_ENABLE
 #    define DRGSCRL KC_NO
