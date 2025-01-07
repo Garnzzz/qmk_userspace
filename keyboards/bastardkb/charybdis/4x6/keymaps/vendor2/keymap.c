@@ -51,6 +51,13 @@ enum tap_dance_codes {
 	DANCE_3,
 };
 
+enum combos {
+    QW_LCA,
+    ALT_F4,
+    HME_LCA,
+    END_LCA,
+};
+
 /** \brief Automatically enable sniping-mode on the pointer layer. */
 #define CHARYBDIS_AUTO_SNIPING_ON_LAYER LAYER_POINTER
 
@@ -94,7 +101,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
   // ├──────────────────────────────────────────────────────┤ 					├──────────────────────────────────────────────────────┤
         KC_TAB,  LCTL_T(KC_A), LGUI_T(KC_S), LALT_T(KC_D), LSFT_T(KC_F), KC_G,    PT_H,  LSFT_T(KC_J), LALT_T(KC_K), LGUI_T(KC_L), LCTL_T(KC_QUOT), KC_SCLN,
   // ├──────────────────────────────────────────────────────┤ 					├──────────────────────────────────────────────────────┤
-        KC_LSFT, PT_Z,  PT_X,    PT_C,    PT_V,    KC_B,       					  PT_N,  KC_M, KC_COMM,  KC_DOT, KC_SLSH, KC_BSLS,
+        KC_LSFT, PT_Z,  PT_X,    PT_C,    PT_V,    KC_B,       					  PT_N,  LT(LAYER_POINER, KC_M, KC_COMM,  KC_DOT, KC_SLSH, KC_BSLS,
   // ╰──────────────────────────────────────────────────────┤ 					├──────────────────────────────────────────────────────╯
           QK_REPEAT_KEY, LT(_LOWER, KC_BSPC), TD(DANCE_1),      					KC_ENT,  LT(_RAISE, KC_SPC),
                                 KC_ESC, MO(LAYER_POINTER),     						OSM(MOD_LSFT)
@@ -111,7 +118,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
   // ├──────────────────────────────────────────────────────┤ ├──────────────────────────────────────────────────────┤
        XXXXXXX, KC_PLUS, KC_MINS, KC_ASTR, KC_SLSH, KC_F11,     KC_F12, KC_COLN, XXXXXXX, XXXXXXX, TD(DANCE_2), XXXXXXX,
   // ╰──────────────────────────────────────────────────────┤ ├──────────────────────────────────────────────────────╯
-                                  _______, _______, _______,    _______, _______,
+                                  _______, _______, _______,    _______, RAISE,,
                                            _______, _______,    _______
   //                            ╰───────────────────────────╯ ╰──────────────────╯
   ),
@@ -120,14 +127,14 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
   // ╭──────────────────────────────────────────────────────╮ ╭──────────────────────────────────────────────────────╮
        XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX,    XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX,
   // ├──────────────────────────────────────────────────────┤ ├──────────────────────────────────────────────────────┤
-       KC_TRNS, KC_EXLM, KC_AT, KC_LPRN,  KC_LBRC, KC_LCBR,    	KC_RCBR, KC_RBRC, KC_RPRN, KC_PERC, KC_EQL,  KC_TRNS,
+       XXXXXXX, KC_EXLM, KC_AT, KC_LPRN,  KC_LBRC, KC_LCBR,    	KC_RCBR, KC_RBRC, KC_RPRN, KC_PERC, KC_EQL,  XXXXXXXm,
   // ├──────────────────────────────────────────────────────┤ ├──────────────────────────────────────────────────────┤
-       KC_TRNS, KC_LCTL, KC_DLR, KC_UNDS, KC_LSFT, KC_ASTR,     KC_HOME, LSFT_T(KC_LEFT), LALT_T(KC_UP), KC_DOWN, LCTL_T(KC_RGHT), XXXXXXX,
+       XXXXXXX, KC_LCTL, KC_DLR, KC_UNDS, KC_LSFT, KC_ASTR,     KC_HOME, LSFT_T(KC_LEFT), LALT_T(KC_UP), KC_DOWN, LCTL_T(KC_RGHT), XXXXXXX,
   // ├──────────────────────────────────────────────────────┤ ├──────────────────────────────────────────────────────┤
        XXXXXXX, KC_HASH, KC_CIRC, KC_PLUS, KC_AMPR, KC_PIPE,    KC_END,  LALT(KC_PSCR), XXXXXXX, XXXXXXX, TD(DANCE_3), XXXXXXX
   // ╰──────────────────────────────────────────────────────┤ ├──────────────────────────────────────────────────────╯
-                                  KC_PAUS, LOWER, _______,    XXXXXXX, _______,
-                                           XXXXXXX, XXXXXXX,      KC_P0
+                                    _______, LOWER, _______,    _______, _______,
+                                           _______, _______,    _______
   //                            ╰───────────────────────────╯ ╰──────────────────╯
   ),
 
@@ -173,11 +180,24 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
        XXXXXXX, _______, DRGSCRL, SNIPING, XXXXXXX, XXXXXXX,    XXXXXXX, XXXXXXX, SNIPING, DRGSCRL, _______, XXXXXXX,
   // ╰──────────────────────────────────────────────────────┤ ├──────────────────────────────────────────────────────╯
                                   KC_BTN2, KC_BTN1, KC_BTN3,    KC_BTN3, KC_BTN1,
-                                           XXXXXXX, KC_TRNS,    KC_BTN2
+                                           KC_BTN4, KC_BTN5,    KC_BTN2
   //                            ╰───────────────────────────╯ ╰──────────────────╯
   ),
 };
 // clang-format on
+
+const uint16_t PROGMEM lca_combo[] = {KC_Q, KC_W, COMBO_END};
+const uint16_t PROGMEM altf4_combo[] = {LALT_T(KC_F3), LSFT_T(KC_F4), COMBO_END};
+const uint16_t PROGMEM gthome_combo[] = {PT_H, LSFT_T(KC_J), LCTL_T(KC_QUOT), COMBO_END};
+const uint16_t PROGMEM gtend_combo[] = {PT_N, LSFT_T(KC_J), LCTL_T(KC_QUOT), COMBO_END};
+
+combo_t key_combos[]  = {
+    [QW_LCA] = COMBO(lca_combo, LCTL(KC_A)),
+    [ALT_F4] = COMBO(altf4_combo, LALT(KC_F4)),
+    [HME_LCA] = COMBO(gthome_combo, LCTL(LSFT(KC_HOME))),
+    [END_LCA] = COMBO(gtend_combo, LCTL(LSFT(KC_END))),
+
+};
 
 #ifdef POINTING_DEVICE_ENABLE
 #    ifdef CHARYBDIS_AUTO_POINTER_LAYER_TRIGGER_ENABLE
@@ -337,4 +357,6 @@ tap_dance_action_t tap_dance_actions[] = {
 			[DANCE_1] = ACTION_TAP_DANCE_TAP_HOLD(KC_TAB, KC_ENT),
 			[DANCE_2] = ACTION_TAP_DANCE_TAP_HOLD(KC_MINS, KC_PAUS),
 			[DANCE_3] = ACTION_TAP_DANCE_TAP_HOLD(KC_QUES, KC_PAUS),
+
+};
 	
