@@ -29,6 +29,15 @@ enum charybdis_keymap_layers {
     LAYER_POINTER,
 };
 
+enum charybdis_keycode {
+    BASE = SAFE_RANGE,
+    LOWER,
+    RAISE,
+    ADJUST,
+    CHANGE,
+    POINTER
+};
+
 /** \brief Automatically enable sniping-mode on the pointer layer. */
 #define CHARYBDIS_AUTO_SNIPING_ON_LAYER LAYER_POINTER
 
@@ -48,7 +57,7 @@ static uint16_t auto_pointer_layer_timer = 0;
 #define RAISE MO(LAYER_RAISE)
 #define PT_Z LT(LAYER_POINTER, KC_Z)
 #define PT_SLSH LT(LAYER_POINTER, KC_SLSH)
-#define PT_X (KC_CUT, KC_X)
+
 
 #ifndef POINTING_DEVICE_ENABLE
 #    define DRGSCRL KC_NO
@@ -63,11 +72,11 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
   // ╭──────────────────────────────────────────────────────╮ ╭──────────────────────────────────────────────────────╮
         KC_ESC,    KC_1,    KC_2,    KC_3,    KC_4,    KC_5,       KC_6,    KC_7,    KC_8,    KC_9,    KC_0, KC_MINS,
   // ├──────────────────────────────────────────────────────┤ ├──────────────────────────────────────────────────────┤
-        KC_TAB,    KC_Q,    KC_W,    KC_E,    KC_R,    KC_T,       KC_Y,    KC_U,    KC_I,    KC_O,    KC_P, KC_BSLS,
+        KC_TAB,    KC_Q,    KC_W,    KC_E,    KC_R,    KC_T,       LT(0, KC_Y),    KC_U,    KC_I,    KC_O,    KC_P, KC_BSLS,
   // ├──────────────────────────────────────────────────────┤ ├──────────────────────────────────────────────────────┤
-       KC_LSFT,    KC_A,    KC_S,    KC_D,    KC_F,    KC_G,       KC_H,    KC_J,    KC_K,    KC_L, KC_SCLN, KC_QUOT,
+       KC_LSFT,    KC_A,    KC_S,    KC_D,    KC_F,    KC_G,       LT(0, KC_H),    KC_J,    KC_K,    KC_L, KC_SCLN, KC_QUOT,
   // ├──────────────────────────────────────────────────────┤ ├──────────────────────────────────────────────────────┤
-       KC_LCTL,    PT_Z,    PT_X,    KC_C,    KC_V,    KC_B,       KC_N,    KC_M, KC_COMM,  KC_DOT, PT_SLSH, KC_LALT,
+       KC_LCTL,    LT(0, KC_Z),    LT(0, KC_X),    LT(0, KC_C),    LT(0, KC_V),    KC_B,       LT(0, KC_N),    KC_M, KC_COMM,  KC_DOT, PT_SLSH, KC_LALT,
   // ╰──────────────────────────────────────────────────────┤ ├──────────────────────────────────────────────────────╯
                                    KC_LGUI, KC_SPC,   LOWER,      RAISE,  KC_ENT,
                                            KC_LALT, KC_BSPC,     KC_DEL
@@ -104,7 +113,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
   //                            ╰───────────────────────────╯ ╰──────────────────╯
   ),
 
- [_ADJUST] = LAYOUT(
+ [LAYER_ADJUST] = LAYOUT(
   // ╭──────────────────────────────────────────────────────╮ ╭──────────────────────────────────────────────────────╮
        XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX,    XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX,
   // ├──────────────────────────────────────────────────────┤ ├──────────────────────────────────────────────────────┤
@@ -119,7 +128,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
   //                            ╰───────────────────────────╯ ╰──────────────────╯
   ),
   
-   [_CHANGE] = LAYOUT(
+   [LAYER_CHANGE] = LAYOUT(
   // ╭──────────────────────────────────────────────────────╮ ╭──────────────────────────────────────────────────────╮
        XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX,    XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX,
   // ├──────────────────────────────────────────────────────┤ ├──────────────────────────────────────────────────────┤
@@ -190,3 +199,99 @@ layer_state_t layer_state_set_user(layer_state_t state) {
 // Forward-declare this helper function since it is defined in rgb_matrix.c.
 void rgb_matrix_update_pwm_buffers(void);
 #endif
+
+bool process_record_user(uint16_t keycode, keyrecord_t *record) {
+  switch (keycode) {
+
+  case QWERTY:
+          if (record->event.pressed) {
+            set_single_persistent_default_layer(_QWERTY);
+          }
+          return false;
+          break;
+		case CHANGE:
+          if (record->event.pressed) {
+            set_single_persistent_default_layer(_CHANGE);
+          }
+          return false;
+          break;
+        case LOWER:
+          if (record->event.pressed) {
+            layer_on(_LOWER);
+            update_tri_layer(_LOWER, _RAISE, _ADJUST);
+          } else {
+            layer_off(_LOWER);
+            update_tri_layer(_LOWER, _RAISE, _ADJUST);
+          }
+          return false;
+          break;
+        case RAISE:
+          if (record->event.pressed) {
+            layer_on(_RAISE);
+            update_tri_layer(_LOWER, _RAISE, _ADJUST);
+          } else {
+            layer_off(_RAISE);
+            update_tri_layer(_LOWER, _RAISE, _ADJUST);
+          }
+          return false;
+          break;
+		  
+  case LT(0, KC_Z):
+		if (!record->tap.count && record->event.pressed) {
+			tap_code16(C(KC_Z)); // Intercept hold function to send Ctrl+Z
+			return false;
+		}
+		return true;			// Return true for normal processing of tap keycode
+  case LT(0, KC_X):
+            if (!record->tap.count && record->event.pressed) {
+                tap_code16(C(KC_X)); // Intercept hold function to send Ctrl-X
+                return false;
+            }
+		return true;			// Return true for normal processing of tap keycode
+  case LT(0, KC_C):
+		if (!record->tap.count && record->event.pressed) {
+			tap_code16(C(KC_C)); // Intercept hold function to send Ctrl+C
+			return false;
+		}
+		return true;			// Return true for normal processing of tap keycode
+  case LT(0, KC_V):
+		if (!record->tap.count && record->event.pressed) {
+			tap_code16(C(KC_V)); // Intercept hold function to send Ctrl+V
+			return false;
+		}
+		return true;			// Return true for normal processing of tap keycode
+  case LT(0, KC_H):
+		if (!record->tap.count && record->event.pressed) {
+			tap_code16(KC_HOME); // Intercept hold fucntion to send Home
+			return false;
+		}
+		return true;			// Return true for normal processing of tap keycode
+  case LT(0, KC_N):
+		if (!record->tap.count && record->event.pressed) {
+			tap_code16(KC_END); // Intercept hold function to send End
+			return false;
+		}
+		return true;			// Return true for normal processing of tap keycode
+  case LT(0, KC_Y):
+		if (!record->tap.count && record->event.pressed) {
+			tap_code16(KC_DEL); // Intercept hold function to send Delete
+			return false;
+		}
+		return true;			// Return true for normal processing of tap keycode
+
+	case TD(DANCE_0):
+        action = &tap_dance_actions[TD_INDEX(keycode)];
+        if (!record->event.pressed && action->state.count && !action->state.finished) {
+            tap_dance_tap_hold_t *tap_hold = (tap_dance_tap_hold_t *)action->user_data;
+            tap_code16(tap_hold->tap);
+        }
+        break;
+    
+        return false;
+  }
+  return true;
+}
+
+tap_dance_action_t tap_dance_actions[] = {
+		[DANCE_0] = ACTION_TAP_DANCE_TAP_HOLD(KC_TAB, KC_ENT),
+};
