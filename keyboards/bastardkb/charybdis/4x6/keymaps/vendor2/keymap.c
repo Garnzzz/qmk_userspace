@@ -38,18 +38,7 @@ enum keycode {
 	POINTER
 };
 
-typedef struct {
-    uint16_t tap;
-    uint16_t hold;
-    uint16_t held;
-} tap_dance_tap_hold_t;
-tap_dance_action_t *action;
 
-enum tap_dance_codes {
-	DANCE_1,
-	DANCE_2,
-	DANCE_3,
-};
 
 /** \brief Automatically enable sniping-mode on the pointer layer. */
 #define CHARYBDIS_AUTO_SNIPING_ON_LAYER LAYER_POINTER
@@ -76,6 +65,8 @@ static uint16_t auto_pointer_layer_timer = 0;
 #define PT_Y (KC_DEL, KC_Y)
 #define PT_H (KC_HOME, KC_H)
 #define PT_N (KC_END, KC_N)
+#define PT_MINS (KC_PAUS, KC_MINS)
+#define PT_QUES (KC_PAUS, KC_QUES
 
 #ifndef POINTING_DEVICE_ENABLE
 #    define DRGSCRL KC_NO
@@ -109,7 +100,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
   // ├──────────────────────────────────────────────────────┤ ├──────────────────────────────────────────────────────┤
        XXXXXXX, KC_F1,   KC_F2,   KC_F3,   KC_F4,   KC_F5,      KC_F6,  KC_F7,   KC_F8,   KC_F9,   KC_F10,  XXXXXXX,
   // ├──────────────────────────────────────────────────────┤ ├──────────────────────────────────────────────────────┤
-       XXXXXXX, KC_PLUS, KC_MINS, KC_ASTR, KC_SLSH, KC_F11,     KC_F12, KC_COLN, XXXXXXX, XXXXXXX, TD(DANCE_2), XXXXXXX,
+       XXXXXXX, KC_PLUS, KC_MINS, KC_ASTR, KC_SLSH, KC_F11,     KC_F12, KC_COLN, XXXXXXX, XXXXXXX, PT_MINS, XXXXXXX,
   // ╰──────────────────────────────────────────────────────┤ ├──────────────────────────────────────────────────────╯
                                   _______, _______, _______,    _______, RAISE,,
                                            _______, _______,    _______
@@ -124,7 +115,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
   // ├──────────────────────────────────────────────────────┤ ├──────────────────────────────────────────────────────┤
        XXXXXXX, KC_LCTL, KC_DLR, KC_UNDS, KC_LSFT, KC_ASTR,     KC_HOME, LSFT_T(KC_LEFT), LALT_T(KC_UP), KC_DOWN, LCTL_T(KC_RGHT), XXXXXXX,
   // ├──────────────────────────────────────────────────────┤ ├──────────────────────────────────────────────────────┤
-       XXXXXXX, KC_HASH, KC_CIRC, KC_PLUS, KC_AMPR, KC_PIPE,    KC_END,  LALT(KC_PSCR), XXXXXXX, XXXXXXX, TD(DANCE_3), XXXXXXX
+       XXXXXXX, KC_HASH, KC_CIRC, KC_PLUS, KC_AMPR, KC_PIPE,    KC_END,  LALT(KC_PSCR), XXXXXXX, XXXXXXX, PT_QUES, XXXXXXX
   // ╰──────────────────────────────────────────────────────┤ ├──────────────────────────────────────────────────────╯
                                     _______, LOWER, _______,    _______, _______,
                                            _______, _______,    _______
@@ -254,89 +245,7 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
           }
           return false;
           break;
-		  
-	
-	case TD(DANCE_1):
-	case TD(DANCE_2):
-	case TD(DANCE_3):
-		action = &tap_dance_actions[TD_INDEX(keycode)];
-        if (!record->event.pressed && action->state.count && !action->state.finished) {
-            tap_dance_tap_hold_t *tap_hold = (tap_dance_tap_hold_t *)action->user_data;
-            tap_code16(tap_hold->tap);
-        }
-        break;
-    
-        return false;
   }
   return true;
-}
-
-void tap_dance_tap_hold_finished(tap_dance_state_t *state, void *user_data) {
-    tap_dance_tap_hold_t *tap_hold = (tap_dance_tap_hold_t *)user_data;
-
-    if (state->pressed) {
-        if (state->count == 1
-#ifndef PERMISSIVE_HOLD
-            && !state->interrupted
-#endif
-        ) {
-            register_code16(tap_hold->hold);
-            tap_hold->held = tap_hold->hold;
-        } else {
-            register_code16(tap_hold->tap);
-            tap_hold->held = tap_hold->tap;
-        }
-    }
-}
-
-void tap_dance_tap_hold_reset(tap_dance_state_t *state, void *user_data) {
-    tap_dance_tap_hold_t *tap_hold = (tap_dance_tap_hold_t *)user_data;
-
-    if (tap_hold->held) {
-        unregister_code16(tap_hold->held);
-        tap_hold->held = 0;
-    }
-}
-
-#define ACTION_TAP_DANCE_TAP_HOLD(tap, hold) \
-    { .fn = {NULL, tap_dance_tap_hold_finished, tap_dance_tap_hold_reset}, .user_data = (void *)&((tap_dance_tap_hold_t){tap, hold, 0}), }
-
-typedef struct {
-    bool is_press_action;
-    uint8_t step;
-} tap;
-
-enum {
-    SINGLE_TAP = 1,
-    SINGLE_HOLD,
-    DOUBLE_TAP,
-    DOUBLE_HOLD,
-    DOUBLE_SINGLE_TAP,
-    MORE_TAPS
-};
-
-static tap dance_state[4];
-
-uint8_t dance_step(tap_dance_state_t *state);
-
-uint8_t dance_step(tap_dance_state_t *state) {
-    if (state->count == 1) {
-        if (state->interrupted || !state->pressed) return SINGLE_TAP;
-        else return SINGLE_HOLD;
-    } else if (state->count == 2) {
-        if (state->interrupted) return DOUBLE_SINGLE_TAP;
-        else if (state->pressed) return DOUBLE_HOLD;
-        else return DOUBLE_TAP;
-    }
-    return MORE_TAPS;
-}
-
-
-
-tap_dance_action_t tap_dance_actions[] = {
-			[DANCE_1] = ACTION_TAP_DANCE_TAP_HOLD(KC_TAB, KC_ENT),
-			[DANCE_2] = ACTION_TAP_DANCE_TAP_HOLD(KC_MINS, KC_PAUS),
-			[DANCE_3] = ACTION_TAP_DANCE_TAP_HOLD(KC_QUES, KC_PAUS),
-
 };
 	
