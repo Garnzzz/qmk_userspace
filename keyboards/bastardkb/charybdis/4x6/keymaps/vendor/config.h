@@ -39,3 +39,5 @@
 
 #define ONESHOT_TIMEOUT 5000 
 /* Time (in ms) befoe the one shot key is released */
+
+#define TAPPING_TERM 200
