@@ -205,7 +205,7 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
 
   case BASE:
           if (record->event.pressed) {
-            set_single_persistent_default_layer(LAYER_QWERTY);
+            set_single_persistent_default_layer(LAYER_BASE);
           }
           return false;
           break;
