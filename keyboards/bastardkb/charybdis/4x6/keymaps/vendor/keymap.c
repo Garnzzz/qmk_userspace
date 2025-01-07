@@ -93,7 +93,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
   // ├──────────────────────────────────────────────────────┤ ├──────────────────────────────────────────────────────┤
       RGB_RMOD, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX,    KC_PAST,   KC_P1,   KC_P2,   KC_P3, KC_PSLS, KC_PDOT,
   // ╰──────────────────────────────────────────────────────┤ ├──────────────────────────────────────────────────────╯
-                                  XXXXXXX, XXXXXXX, _______,    XXXXXXX, _______,
+                                  XXXXXXX, XXXXXXX, _______,    RAISE, _______,
                                            XXXXXXX, XXXXXXX,      KC_P0
   //                            ╰───────────────────────────╯ ╰──────────────────╯
   ),
@@ -108,7 +108,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
   // ├──────────────────────────────────────────────────────┤ ├──────────────────────────────────────────────────────┤
        KC_MPRV, KC_HOME, KC_PGUP, KC_PGDN,  KC_END, XXXXXXX,    XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, KC_VOLD,
   // ╰──────────────────────────────────────────────────────┤ ├──────────────────────────────────────────────────────╯
-                                  _______, _______, XXXXXXX,    _______, XXXXXXX,
+                                  _______, LOWER, XXXXXXX,    _______, XXXXXXX,
                                            _______, _______,    XXXXXXX
   //                            ╰───────────────────────────╯ ╰──────────────────╯
   ),
@@ -203,35 +203,35 @@ void rgb_matrix_update_pwm_buffers(void);
 bool process_record_user(uint16_t keycode, keyrecord_t *record) {
   switch (keycode) {
 
-  case QWERTY:
+  case BASE:
           if (record->event.pressed) {
-            set_single_persistent_default_layer(_QWERTY);
+            set_single_persistent_default_layer(LAYER_QWERTY);
           }
           return false;
           break;
 		case CHANGE:
           if (record->event.pressed) {
-            set_single_persistent_default_layer(_CHANGE);
+            set_single_persistent_default_layer(LAYER_CHANGE);
           }
           return false;
           break;
         case LOWER:
           if (record->event.pressed) {
-            layer_on(_LOWER);
-            update_tri_layer(_LOWER, _RAISE, _ADJUST);
+            layer_on(LAYER_LOWER);
+            update_tri_layer(LAYER_LOWER, LAYER_RAISE, LAYER_ADJUST);
           } else {
-            layer_off(_LOWER);
-            update_tri_layer(_LOWER, _RAISE, _ADJUST);
+            layer_off(LAYER_LOWER);
+            update_tri_layer(LAYER_LOWER, LAYER_RAISE, LAYER_ADJUST);
           }
           return false;
           break;
         case RAISE:
           if (record->event.pressed) {
-            layer_on(_RAISE);
-            update_tri_layer(_LOWER, _RAISE, _ADJUST);
+            layer_on(LAYER_RAISE);
+            update_tri_layer(LAYER_LOWER, LAYER_RAISE, LAYER_ADJUST);
           } else {
-            layer_off(_RAISE);
-            update_tri_layer(_LOWER, _RAISE, _ADJUST);
+            layer_off(LAYER_RAISE);
+            update_tri_layer(LAYER_LOWER, LAYER_RAISE, LAYER_ADJUST);
           }
           return false;
           break;
