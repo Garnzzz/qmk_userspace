@@ -38,16 +38,15 @@ enum charybdis_keycode {
     POINTER
 };
 
-typedef struct {
-	uint16_t tap;
-	uint16_t hold;
-	uint16_t held;
-} tap_dance_tap_hold_t;
-tap_dance_action_t *action;
 
-enum tap_dance_codes {
-    DANCE_0,
-    DANCE_1,
+enum {
+    UNDO_Z,
+    CUT_X,
+    COPY_C,
+    PASTE_V,
+    DEL_Y,
+    HOME_H,
+    END_N,
 };
 
 
@@ -83,15 +82,15 @@ static uint16_t auto_pointer_layer_timer = 0;
 const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
   [LAYER_BASE] = LAYOUT(
   // ╭──────────────────────────────────────────────────────╮ ╭──────────────────────────────────────────────────────╮
-        KC_ESC,    KC_1,    KC_2,    KC_3,    KC_4,    KC_5,       KC_6,    KC_7,    KC_8,    KC_9,    KC_0, KC_MINS,
+       KC_TILD,    KC_1,    KC_2,    KC_3,    KC_4,    KC_5,       KC_6,    KC_7,    KC_8,    KC_9,    KC_0, KC_MINS,
   // ├──────────────────────────────────────────────────────┤ ├──────────────────────────────────────────────────────┤
-        KC_TAB,    KC_Q,    KC_W,    KC_E,    KC_R,    KC_T,       LT(0, KC_Y),    KC_U,    KC_I,    KC_O,    KC_P, KC_BSLS,
+        KC_TAB,    KC_Q,    KC_W,    KC_E,    KC_R,    KC_T,       TD(DEL_Y),    KC_U,    KC_I,    KC_O,    KC_P, KC_BSLS,
   // ├──────────────────────────────────────────────────────┤ ├──────────────────────────────────────────────────────┤
-       KC_LSFT,    KC_A,    KC_S,    KC_D,    KC_F,    KC_G,       LT(0, KC_H),    KC_J,    KC_K,    KC_L, KC_SCLN, KC_QUOT,
+       KC_LSFT,    KC_A,    KC_S,    KC_D,    KC_F,    KC_G,       TD(HOME_H),    KC_J,    KC_K,    KC_L, KC_SCLN, KC_QUOT,
   // ├──────────────────────────────────────────────────────┤ ├──────────────────────────────────────────────────────┤
-       KC_LCTL,    LT(0, KC_Z),    LT(0, KC_X),    LT(0, KC_C),    LT(0, KC_V),    KC_B,       LT(0, KC_N),    KC_M, KC_COMM,  KC_DOT, PT_SLSH, KC_LALT,
+       KC_LCTL,    TD(UNDO_Z),    TD(CUT_X)),    TD(COPY_C),    TD(PASTE_V),    KC_B,       TD(END_N.),    KC_M, KC_COMM,  KC_DOT, PT_SLSH, KC_LALT,
   // ╰──────────────────────────────────────────────────────┤ ├──────────────────────────────────────────────────────╯
-            QK_REPEAT_KEY, LT(LOWER, KC_BSPC), TD(DANCE_0),     KC_ENT,  LT(RAISE, KC_SPC),
+                 QK_REPEAT_KEY, LT(LOWER, KC_BSPC), KC_TAB,     KC_ENT,  LT(RAISE, KC_SPC),
                                             KC_ESC, KC_DEL,     OSM(MOD_LSFT)
   //                            ╰───────────────────────────╯ ╰──────────────────╯
   ),
@@ -147,7 +146,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
   // ├──────────────────────────────────────────────────────┤ ├──────────────────────────────────────────────────────┤
        XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX,    XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX,
   // ├──────────────────────────────────────────────────────┤ ├──────────────────────────────────────────────────────┤
-       XXXXXXX, TD(DANCE_1), XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX,    XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX,
+       XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX,    XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX,
   // ├──────────────────────────────────────────────────────┤ ├──────────────────────────────────────────────────────┤
        XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX,    XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX,
   // ╰──────────────────────────────────────────────────────┤ ├──────────────────────────────────────────────────────╯
@@ -213,98 +212,31 @@ layer_state_t layer_state_set_user(layer_state_t state) {
 void rgb_matrix_update_pwm_buffers(void);
 #endif
 
+
+typedef struct {
+    uint16_t tap;
+    uint16_t hold;
+    uint16_t held;
+} tap_dance_tap_hold_t;
+
 bool process_record_user(uint16_t keycode, keyrecord_t *record) {
-  switch (keycode) {
-
-  case BASE:
-          if (record->event.pressed) {
-            set_single_persistent_default_layer(LAYER_BASE);
-          }
-          return false;
-          break;
-		case CHANGE:
-          if (record->event.pressed) {
-            set_single_persistent_default_layer(LAYER_CHANGE);
-          }
-          return false;
-          break;
-        case LOWER:
-          if (record->event.pressed) {
-            layer_on(LAYER_LOWER);
-            update_tri_layer(LAYER_LOWER, LAYER_RAISE, LAYER_ADJUST);
-          } else {
-            layer_off(LAYER_LOWER);
-            update_tri_layer(LAYER_LOWER, LAYER_RAISE, LAYER_ADJUST);
-          }
-          return false;
-          break;
-        case RAISE:
-          if (record->event.pressed) {
-            layer_on(LAYER_RAISE);
-            update_tri_layer(LAYER_LOWER, LAYER_RAISE, LAYER_ADJUST);
-          } else {
-            layer_off(LAYER_RAISE);
-            update_tri_layer(LAYER_LOWER, LAYER_RAISE, LAYER_ADJUST);
-          }
-          return false;
-          break;
-		  
-  case LT(0, KC_Z):
-		if (!record->tap.count && record->event.pressed) {
-			tap_code16(C(KC_Z)); // Intercept hold function to send Ctrl+Z
-			return false;
-		}
-		return true;			// Return true for normal processing of tap keycode
-  case LT(0, KC_X):
-            if (!record->tap.count && record->event.pressed) {
-                tap_code16(C(KC_X)); // Intercept hold function to send Ctrl-X
-                return false;
+    tap_dance_action_t *action;
+    // list all tap dance keycodes with tap-hold configurations
+    switch (keycode) {
+        case TD(UNDO_Z):
+        case TD(CUT_X):
+        case TD(COPY_C):
+        case TD(PASTE_V):
+        case TD(DEL_Y):
+        case TD(HOME_H):
+        case TD(END_N):  
+            action = &tap_dance_actions[QK_TAP_DANCE_GET_INDEX(keycode)];
+            if (!record->event.pressed && action->state.count && !action->state.finished) {
+                tap_dance_tap_hold_t *tap_hold = (tap_dance_tap_hold_t *)action->user_data;
+                tap_code16(tap_hold->tap);
             }
-		return true;			// Return true for normal processing of tap keycode
-  case LT(0, KC_C):
-		if (!record->tap.count && record->event.pressed) {
-			tap_code16(C(KC_C)); // Intercept hold function to send Ctrl+C
-			return false;
-		}
-		return true;			// Return true for normal processing of tap keycode
-  case LT(0, KC_V):
-		if (!record->tap.count && record->event.pressed) {
-			tap_code16(C(KC_V)); // Intercept hold function to send Ctrl+V
-			return false;
-		}
-		return true;			// Return true for normal processing of tap keycode
-  case LT(0, KC_H):
-		if (!record->tap.count && record->event.pressed) {
-			tap_code16(KC_HOME); // Intercept hold fucntion to send Home
-			return false;
-		}
-		return true;			// Return true for normal processing of tap keycode
-  case LT(0, KC_N):
-		if (!record->tap.count && record->event.pressed) {
-			tap_code16(KC_END); // Intercept hold function to send End
-			return false;
-		}
-		return true;			// Return true for normal processing of tap keycode
-  case LT(0, KC_Y):
-		if (!record->tap.count && record->event.pressed) {
-			tap_code16(KC_DEL); // Intercept hold function to send Delete
-			return false;
-		}
-		return true;			// Return true for normal processing of tap keycode
-
-		  
-		  
-	case TD(DANCE_0):
-        action = &tap_dance_actions[TD_INDEX(keycode)];
-        if (!record->event.pressed && action->state.count && !action->state.finished) {
-            tap_dance_tap_hold_t *tap_hold = (tap_dance_tap_hold_t *)action->user_data;
-            tap_code16(tap_hold->tap);
-        }
-        break;
-    
-        return false;
-  }
-  return true;
+    }
+    return true;
 }
 
 void tap_dance_tap_hold_finished(tap_dance_state_t *state, void *user_data) {
@@ -337,80 +269,14 @@ void tap_dance_tap_hold_reset(tap_dance_state_t *state, void *user_data) {
 #define ACTION_TAP_DANCE_TAP_HOLD(tap, hold) \
     { .fn = {NULL, tap_dance_tap_hold_finished, tap_dance_tap_hold_reset}, .user_data = (void *)&((tap_dance_tap_hold_t){tap, hold, 0}), }
 
-typedef struct {
-    bool is_press_action;
-    uint8_t step;
-} tap;
-
-enum {
-    SINGLE_TAP = 1,
-    SINGLE_HOLD,
-    DOUBLE_TAP,
-    DOUBLE_HOLD,
-    DOUBLE_SINGLE_TAP,
-    MORE_TAPS
-};
-
-static tap dance_state[4];
-
-uint8_t dance_step(tap_dance_state_t *state);
-
-uint8_t dance_step(tap_dance_state_t *state) {
-    if (state->count == 1) {
-        if (state->interrupted || !state->pressed) return SINGLE_TAP;
-        else return SINGLE_HOLD;
-    } else if (state->count == 2) {
-        if (state->interrupted) return DOUBLE_SINGLE_TAP;
-        else if (state->pressed) return DOUBLE_HOLD;
-        else return DOUBLE_TAP;
-    }
-    return MORE_TAPS;
-}
-
-
-void on_dance_1(tap_dance_state_t *state, void *user_data);
-void dance_1_finished(tap_dance_state_t *state, void *user_data);
-void dance_1_reset(tap_dance_state_t *state, void *user_data);
-
-void on_dance_1(tap_dance_state_t *state, void *user_data) {
-    if(state->count == 3) {
-        tap_code16(KC_LEFT_CTRL);
-        tap_code16(KC_LEFT_CTRL);
-        tap_code16(KC_LEFT_CTRL);
-    }
-    if(state->count > 3) {
-        tap_code16(KC_LEFT_CTRL);
-    }
-}
-
-void dance_1_finished(tap_dance_state_t *state, void *user_data) {
-    dance_state[0].step = dance_step(state);
-    switch (dance_state[0].step) {
-        case SINGLE_TAP: register_code16(KC_NO); break;
-        case SINGLE_HOLD: register_code16(KC_LEFT_CTRL); break;
-        case DOUBLE_TAP: register_code16(KC_NO); register_code16(KC_NO); break;
-        case DOUBLE_HOLD: register_code16(LCTL(KC_S)); break;
-        case DOUBLE_SINGLE_TAP: tap_code16(KC_LEFT_CTRL); register_code16(KC_LEFT_CTRL);
-    }
-}
-
-void dance_1_reset(tap_dance_state_t *state, void *user_data) {
-    wait_ms(10);
-    switch (dance_state[0].step) {
-        case SINGLE_TAP: unregister_code16(KC_NO); break;
-        case SINGLE_HOLD: unregister_code16(KC_LEFT_CTRL); break;
-        case DOUBLE_TAP: unregister_code16(KC_NO); break;
-        case DOUBLE_HOLD: unregister_code16(LCTL(KC_S)); break;
-        case DOUBLE_SINGLE_TAP: unregister_code16(KC_LEFT_CTRL); break;
-    }
-    dance_state[0].step = 0;
-}
-
-
-
 
 tap_dance_action_t tap_dance_actions[] = {
-        [DANCE_0] = ACTION_TAP_DANCE_TAP_HOLD(KC_ESCAPE, KC_TILD),
-		[DANCE_1] = ACTION_TAP_DANCE_FN_ADVANCED(on_dance_1, dance_1_finished, dance_1_reset),
-		
-};
+    //tap once for KC, hold for KC
+    [UNDO_Z] = ACTION_TAP_DANCE_TAP_HOLD(KC_Z, LCTL(KC_Z))
+    [CUT_X] = ACTION_TAP_DANCE_TAP_HOLD(KC_X, LCLTL(KC_X))
+    [COPY_C] = ACTION_TAP_DANCE_TAP_HOLD(KC_C, LCLTL(KC_C))
+    [PASTE_V] = ACTION_TAP_DANCE_TAP_HOLD(KC_V, LCTL(KC_V))
+    [DEL_Y] = ACTION_TAP_DANCE_TAP_HOLD(KC_Y, KC_DEL)
+    [HOME_H] = ACTION_TAP_DANCE_TAP_HOLD(KC_H, KC_HOME)
+    [END_N] = ACTION_TAP_DANCE_TAP_HOLD(KC_N, KC_END)
+    };
