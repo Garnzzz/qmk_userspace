@@ -88,7 +88,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
   // ├──────────────────────────────────────────────────────┤ ├──────────────────────────────────────────────────────┤
        KC_LSFT,    KC_A,    KC_S,    KC_D,    KC_F,    KC_G,       TD(HOME_H),    KC_J,    KC_K,    KC_L, KC_SCLN, KC_QUOT,
   // ├──────────────────────────────────────────────────────┤ ├──────────────────────────────────────────────────────┤
-       KC_LCTL,    TD(UNDO_Z),    TD(CUT_X)),    TD(COPY_C),    TD(PASTE_V),    KC_B,       TD(END_N.),    KC_M, KC_COMM,  KC_DOT, PT_SLSH, KC_LALT,
+       KC_LCTL,    TD(UNDO_Z),    TD(CUT_X),    TD(COPY_C),    TD(PASTE_V),    KC_B,       TD(END_N),    KC_M, KC_COMM,  KC_DOT, PT_SLSH, KC_LALT,
   // ╰──────────────────────────────────────────────────────┤ ├──────────────────────────────────────────────────────╯
                  QK_REPEAT_KEY, LT(LOWER, KC_BSPC), KC_TAB,     KC_ENT,  LT(RAISE, KC_SPC),
                                             KC_ESC, KC_DEL,     OSM(MOD_LSFT)
@@ -273,8 +273,8 @@ void tap_dance_tap_hold_reset(tap_dance_state_t *state, void *user_data) {
 tap_dance_action_t tap_dance_actions[] = {
     //tap once for KC, hold for KC
     [UNDO_Z] = ACTION_TAP_DANCE_TAP_HOLD(KC_Z, LCTL(KC_Z))
-    [CUT_X] = ACTION_TAP_DANCE_TAP_HOLD(KC_X, LCLTL(KC_X))
-    [COPY_C] = ACTION_TAP_DANCE_TAP_HOLD(KC_C, LCLTL(KC_C))
+    [CUT_X] = ACTION_TAP_DANCE_TAP_HOLD(KC_X, LCTL(KC_X))
+    [COPY_C] = ACTION_TAP_DANCE_TAP_HOLD(KC_C, LCTL(KC_C))
     [PASTE_V] = ACTION_TAP_DANCE_TAP_HOLD(KC_V, LCTL(KC_V))
     [DEL_Y] = ACTION_TAP_DANCE_TAP_HOLD(KC_Y, KC_DEL)
     [HOME_H] = ACTION_TAP_DANCE_TAP_HOLD(KC_H, KC_HOME)
