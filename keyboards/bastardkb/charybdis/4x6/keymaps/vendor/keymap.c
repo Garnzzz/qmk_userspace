@@ -272,11 +272,11 @@ void tap_dance_tap_hold_reset(tap_dance_state_t *state, void *user_data) {
 
 tap_dance_action_t tap_dance_actions[] = {
     //tap once for KC, hold for KC
-    [UNDO_Z] = ACTION_TAP_DANCE_TAP_HOLD(KC_Z, LCTL(KC_Z))
-    [CUT_X] = ACTION_TAP_DANCE_TAP_HOLD(KC_X, LCTL(KC_X))
-    [COPY_C] = ACTION_TAP_DANCE_TAP_HOLD(KC_C, LCTL(KC_C))
-    [PASTE_V] = ACTION_TAP_DANCE_TAP_HOLD(KC_V, LCTL(KC_V))
-    [DEL_Y] = ACTION_TAP_DANCE_TAP_HOLD(KC_Y, KC_DEL)
-    [HOME_H] = ACTION_TAP_DANCE_TAP_HOLD(KC_H, KC_HOME)
-    [END_N] = ACTION_TAP_DANCE_TAP_HOLD(KC_N, KC_END)
+    [UNDO_Z] = ACTION_TAP_DANCE_TAP_HOLD(KC_Z, LCTL(KC_Z)),
+    [CUT_X] = ACTION_TAP_DANCE_TAP_HOLD(KC_X, LCTL(KC_X)),
+    [COPY_C] = ACTION_TAP_DANCE_TAP_HOLD(KC_C, LCTL(KC_C)),
+    [PASTE_V] = ACTION_TAP_DANCE_TAP_HOLD(KC_V, LCTL(KC_V)),
+    [DEL_Y] = ACTION_TAP_DANCE_TAP_HOLD(KC_Y, KC_DEL),
+    [HOME_H] = ACTION_TAP_DANCE_TAP_HOLD(KC_H, KC_HOME),
+    [END_N] = ACTION_TAP_DANCE_TAP_HOLD(KC_N, KC_END),
     };
